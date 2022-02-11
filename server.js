@@ -40,3 +40,10 @@ app.route("/api/users", userRoutes);
 
 //routes
 app.use("/api", coreRoutes);
+
+// listen
+app.listen(PORT, () => {
+  console.log(
+    `Server is running in ${NODE_ENV} mode on ${HOST}:${PORT}`.blue.bold
+  );
+});
