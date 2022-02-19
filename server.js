@@ -1,9 +1,15 @@
 import express from "express";
 import dotenv from "dotenv";
 import morgan from "morgan";
-import connectToDatabase from "./config/database";
 import cors from "cors";
-import userRoutes from "./routes/userRoutes";
+import colors from "colors";
+
+import connectToDatabase from "./config/database.js";
+
+import userRoutes from "./routes/userRoutes.js";
+import coreRoutes from "./routes/coreRoutes.js";
+import errorHandler from "./middleware/errorMiddleware.js";
+import notFoundMiddleware from "./middleware/notFoundMiddleWare.js";
 
 //initialization
 const app = express();
@@ -25,24 +31,28 @@ if (process.env.NODE_ENV !== "production") {
 //encoding
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors);
+app.use(cors());
 
 //constants
-
-const HOST = process.env.HOST;
-const port = process.env.PORT || 5000;
 const NODE_ENV = process.env.NODE_ENV;
-
-//routes
-
-app.route("/api", coreRoutes);
-app.route("/api/users", userRoutes);
+const HOST = process.env.HOST;
+const PORT = process.env.PORT || 5000;
 
 //routes
 app.use("/api", coreRoutes);
+app.use("/api/users", userRoutes);
+
+//Not Found
+app.route(notFoundMiddleware);
+
+// //Middlewares
+app.route(errorHandler);
 
 // listen
-app.listen(PORT, () => {
+app.listen(PORT, (err) => {
+  if (err) {
+    console.log(`Error:${err}`);
+  }
   console.log(
     `Server is running in ${NODE_ENV} mode on ${HOST}:${PORT}`.blue.bold
   );
