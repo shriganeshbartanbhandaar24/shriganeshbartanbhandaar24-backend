@@ -1,8 +1,8 @@
-import asyncHandle from "express-async-handler";
+import asyncHandler from "express-async-handler";
 import { validationResult } from "express-validator";
 import User from "../models/UserModel.js";
 
-const userLogin = asyncHandle(async (req, res) => {
+const userLogin = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -32,34 +32,36 @@ const userLogin = asyncHandle(async (req, res) => {
   });
 });
 
-const userSignUp = asyncHandle(async (req, res) => {
+const userSignUp = asyncHandler(async (req, res) => {
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array });
+    res.status(400);
+    return res.json({ errors: errors.array() });
   }
 
   const { firstName, lastName, email, password } = req.body;
 
-  const userExist = await User.findOne({ email: email });
+  const existUser = await User.findOne({ email: email });
 
-  if (userExist) {
-    console.log("errors___1");
-    return res.status(400).json({ message: `User:${email} Already Exist` });
+  if (existUser) {
+    res.status(400);
+    return res.json({
+      message: `User with email ${email} is already exists`,
+    });
   }
+
   const user = await User.create({
     firstName,
     lastName,
     email,
     password,
   });
-  if (user) {
-    return res
-      .status(200)
-      .json({ user: await User.findById(user._id).select("-password") });
-  } else {
-    return res.status(401).json({ mesage: "Something Went  Worng!!!" });
-  }
+
+  res.status(201);
+  return res.json({
+    user: await User.findById(user._id).select("-password"),
+  });
 });
 
 export { userLogin, userSignUp };

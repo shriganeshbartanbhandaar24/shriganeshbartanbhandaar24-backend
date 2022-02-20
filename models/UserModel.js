@@ -6,26 +6,40 @@ const UserSchema = mongoose.Schema(
     firstName: {
       type: String,
       trim: true,
-      require: true,
+      required: true,
     },
     lastName: {
       type: String,
       trim: true,
-      require: true,
+      required: true,
     },
     email: {
       type: String,
       trim: true,
-      require: true,
+      unique: true,
+      required: true,
     },
     mobile: {
       type: String,
       trim: true,
-      require: true,
+      unique: true,
+      sparse: true,
+    },
+    password: {
+      type: String,
+      required: true,
     },
     isAdmin: {
-      type: String,
-      trim: true,
+      type: Boolean,
+      default: false,
+    },
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    wishList: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "WishList",
     },
     addresses: [
       {
@@ -34,7 +48,9 @@ const UserSchema = mongoose.Schema(
       },
     ],
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+  }
 );
 
 UserSchema.methods.authenticate = async function (password) {
