@@ -1,9 +1,14 @@
-import express from "express";
-import { body } from "express-validator";
+import express from "express"
+import { body } from "express-validator"
+import { authenticate, allowAdminOnly } from "../middleware/authMiddleware.js"
+import {
+  userLogin,
+  userSignUp,
+  getUsers,
+  deleteUser,
+} from "../controller/userController.js"
 
-import { userLogin, userSignUp } from "../controller/userController.js";
-
-const router = express.Router();
+const router = express.Router()
 
 router.post(
   "/login",
@@ -12,16 +17,19 @@ router.post(
     body("password").not().isEmpty().isString(),
   ],
   userLogin
-);
+)
 router.post(
   "/signup",
   [
-    body("firstName").not().isEmpty().isString(),
-    body("lastName").not().isEmpty().isString(),
+    body("name").not().isEmpty().isString(),
+    body("mobile").not().isEmpty().isString(),
     body("email").not().isEmpty().isEmail(),
     body("password").not().isEmpty().isString(),
   ],
   userSignUp
-);
+)
 
-export default router;
+router.route("/").get(authenticate, allowAdminOnly, getUsers)
+router.route("/:id").delete(authenticate, allowAdminOnly, deleteUser)
+
+export default router

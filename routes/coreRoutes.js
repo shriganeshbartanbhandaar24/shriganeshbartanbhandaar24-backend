@@ -1,9 +1,9 @@
-import express from "express";
-import { sayHello } from "../controller/coreController.js";
+import express from 'express'
+import { sayHello } from '../controller/coreController.js'
 
-const router = express.Router();
-router.get("/cores", (req, res) => {
-  return res.send("<h1>👋🏼 Hello Developers 👨🏻‍💻 !</h1>");
-});
+const router = express.Router()
+router.get('/cores', (req, res) => {
+  return res.send('<h1>👋🏼 Hello Developers 👨🏻‍💻 !</h1>')
+})
 
-export default router;
+export default router

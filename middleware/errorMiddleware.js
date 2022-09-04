@@ -1,10 +1,10 @@
 const errorHandler = (err, req, res, next) => {
-  const statusCode = res.statusCode == 200 ? res.statusCode : 500;
-  res.status(statusCode);
+  const statusCode = res.statusCode == 200 ? res.statusCode : 500
+  res.status(statusCode)
 
   return res.json({
-    message: err.message,
+    message: err.message + "HEllo",
     stack: process.env.NODE_ENV == "development" ? err.stack : null,
-  });
-};
-export default errorHandler;
+  })
+}
+export default errorHandler

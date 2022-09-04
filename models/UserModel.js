@@ -1,14 +1,9 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import mongoose from "mongoose"
+import bcrypt from "bcryptjs"
 
 const UserSchema = mongoose.Schema(
   {
-    firstName: {
-      type: String,
-      trim: true,
-      required: true,
-    },
-    lastName: {
+    name: {
       type: String,
       trim: true,
       required: true,
@@ -31,6 +26,7 @@ const UserSchema = mongoose.Schema(
     },
     isAdmin: {
       type: Boolean,
+      required: true,
       default: false,
     },
     isActive: {
@@ -51,18 +47,20 @@ const UserSchema = mongoose.Schema(
   {
     timestamps: true,
   }
-);
+)
 
 UserSchema.methods.authenticate = async function (password) {
-  return await bcrypt.compareSync(password, this.password);
-};
+  return bcrypt.compareSync(password, this.password)
+}
 
 UserSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
-    const hashPassword = await bcrypt.hashSync(this.password, 10);
-    this.password = hashPassword;
+    const hashPassword = bcrypt.hashSync(this.password, 10)
+    this.password = hashPassword
   }
-  return next();
-});
+  return next()
+})
 
-export default mongoose.model("User", UserSchema);
+const User = mongoose.model("User", UserSchema)
+
+export default User
